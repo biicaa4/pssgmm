@@ -2417,6 +2417,23 @@
 
         /* ===== MOBILE RESPONSIVE FIXES ===== */
         @media (max-width: 900px) {
+            .nav-inner {
+                padding: 0 16px;
+                gap: 10px;
+            }
+
+            .nav-logo {
+                font-size: 16px;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
             .overview-grid {
                 grid-template-columns: 1fr;
             }
@@ -2470,6 +2487,21 @@
                 gap: 20px;
             }
 
+            .roles-table-header {
+                grid-template-columns: 1fr;
+                padding: 14px 18px;
+            }
+
+            .roles-table-header span:last-child {
+                display: none;
+            }
+
+            .role-row {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                padding: 16px 18px;
+            }
+
             .section {
                 padding: 0 20px 80px;
             }
@@ -2508,18 +2540,6 @@
         }
 
         @media (max-width: 640px) {
-            .nav-inner {
-                padding: 0 16px;
-            }
-
-            .nav-tabs {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: flex;
-            }
-
             .timeline-grid {
                 grid-template-columns: 1fr;
             }
@@ -2564,16 +2584,7 @@
                 font-size: 24px;
             }
 
-            .roles-table-header {
-                grid-template-columns: 1fr;
-            }
-
-            .roles-table-header span:last-child {
-                display: none;
-            }
-
             .role-row {
-                grid-template-columns: 1fr;
                 gap: 4px;
             }
 
