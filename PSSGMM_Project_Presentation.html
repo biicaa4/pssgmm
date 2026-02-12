@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSSGMM — Digital System Proposal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0f1a2b;
+            --ink-light: #3a4a5e;
+            --ink-muted: #7a8a9e;
+            --cream: #faf8f5;
+            --warm-white: #ffffff;
+            --gold: #c8a251;
+            --gold-light: #e8d5a0;
+            --gold-pale: #f5edda;
+            --emerald: #1a6b4a;
+            --emerald-light: #e6f2ec;
+            --ruby: #8b2c3a;
+            --border: #e8e4de;
+            --shadow-sm: 0 1px 3px rgba(15, 26, 43, 0.06);
+            --shadow-md: 0 4px 16px rgba(15, 26, 43, 0.08);
+            --shadow-lg: 0 12px 40px rgba(15, 26, 43, 0.12);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --nav-bg: rgba(250, 248, 245, 0.85);
+            --mock-main-bg: #f7f6f3;
+            --mock-table-header-bg: #faf9f7;
+            --mock-table-hover: #fdfcfa;
+            --filter-bg: var(--warm-white);
+            --callout-gold-text: #8a6d22;
+            --callout-green-text: #1a6b4a;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ink: #e8e4de;
+                --ink-light: #b8bcc4;
+                --ink-muted: #8a8e96;
+                --cream: #0f1219;
+                --warm-white: #1a1f2a;
+                --gold: #d4af5e;
+                --gold-light: #5c4a28;
+                --gold-pale: #2a2418;
+                --emerald: #3cd88c;
+                --emerald-light: #172a20;
+                --ruby: #e06070;
+                --border: #2a303c;
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+                --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+                --nav-bg: rgba(15, 18, 25, 0.88);
+                --mock-main-bg: #141820;
+                --mock-table-header-bg: #1e2330;
+                --mock-table-hover: #1e232e;
+                --filter-bg: var(--warm-white);
+                --callout-gold-text: #d4af5e;
+                --callout-green-text: #3cd88c;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        :root[data-theme="light"] {
+            --ink: #0f1a2b;
+            --ink-light: #3a4a5e;
+            --ink-muted: #7a8a9e;
+            --cream: #faf8f5;
+            --warm-white: #ffffff;
+            --gold: #c8a251;
+            --gold-light: #e8d5a0;
+            --gold-pale: #f5edda;
+            --emerald: #1a6b4a;
+            --emerald-light: #e6f2ec;
+            --ruby: #8b2c3a;
+            --border: #e8e4de;
+            --shadow-sm: 0 1px 3px rgba(15, 26, 43, 0.06);
+            --shadow-md: 0 4px 16px rgba(15, 26, 43, 0.08);
+            --shadow-lg: 0 12px 40px rgba(15, 26, 43, 0.12);
+            --nav-bg: rgba(250, 248, 245, 0.85);
+            --mock-main-bg: #f7f6f3;
+            --mock-table-header-bg: #faf9f7;
+            --mock-table-hover: #fdfcfa;
+            --filter-bg: var(--warm-white);
+            --callout-gold-text: #8a6d22;
+            --callout-green-text: #1a6b4a;
+        }
+
+        :root[data-theme="dark"] {
+            --ink: #e8e4de;
+            --ink-light: #b8bcc4;
+            --ink-muted: #8a8e96;
+            --cream: #0f1219;
+            --warm-white: #1a1f2a;
+            --gold: #d4af5e;
+            --gold-light: #5c4a28;
+            --gold-pale: #2a2418;
+            --emerald: #3cd88c;
+            --emerald-light: #172a20;
+            --ruby: #e06070;
+            --border: #2a303c;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+            --nav-bg: rgba(15, 18, 25, 0.88);
+            --mock-main-bg: #141820;
+            --mock-table-header-bg: #1e2330;
+            --mock-table-hover: #1e232e;
+            --filter-bg: var(--warm-white);
+            --callout-gold-text: #d4af5e;
+            --callout-green-text: #3cd88c;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow 0.3s;
+        }
+
+        .nav.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo span {
+            color: var(--gold);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(128, 128, 128, 0.08);
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--warm-white);
+            color: var(--ink);
+            font-size: 18px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-toggle-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-tab {
+            padding: 8px 18px;
+            border: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            color: var(--ink);
+            background: rgba(128, 128, 128, 0.08);
+        }
+
+        .nav-tab.active {
+            background: var(--warm-white);
+            color: var(--ink);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 140px 32px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(200, 162, 81, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--gold-pale);
+            border: 1px solid var(--gold-light);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 28px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--ink);
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--ink-muted);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta-item {
+            text-align: center;
+        }
+
+        .hero-meta-item .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-muted);
+            margin-bottom: 4px;
+        }
+
+        .hero-meta-item .value {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--ink);
+            max-width: 280px;
+            overflow-wrap: anywhere;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            display: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px 100px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            margin-bottom: 48px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: var(--ink-muted);
+            margin-top: 12px;
+            line-height: 1.7;
+            max-width: 640px;
+        }
+
+        /* ===== OVERVIEW CARDS ===== */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .overview-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 36px 28px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+        }
+
+        .overview-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .overview-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon.blue {
+            background: #e8f0fe;
+        }
+
+        .card-icon.green {
+            background: var(--emerald-light);
+        }
+
+        .card-icon.amber {
+            background: var(--gold-pale);
+        }
+
+        .overview-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--ink);
+        }
+
+        .overview-card p {
+            font-size: 14px;
+            color: var(--ink-muted);
+            line-height: 1.7;
+        }
+
+        /* ===== ROLE TABLE ===== */
+        .roles-table {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .roles-table-header {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            background: var(--ink);
+            padding: 16px 28px;
+        }
+
+        .roles-table-header span {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+
+        .role-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .role-row:last-child {
+            border-bottom: none;
+        }
+
+        .role-row:hover {
+            background: rgba(200, 162, 81, 0.04);
+        }
+
+        .role-name {
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .role-dot.gold {
+            background: var(--gold);
+        }
+
+        .role-dot.emerald {
+            background: var(--emerald);
+        }
+
+        .role-dot.ink {
+            background: var(--ink);
+        }
+
+        .role-desc {
+            font-size: 14px;
+            color: var(--ink-muted);
+            line-height: 1.6;
+        }
+
+        /* ===== FEATURES ===== */
+        .feature-block {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 24px;
+        }
+
+        .feature-block-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .feature-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--ink);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .feature-block h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .feature-block>p {
+            font-size: 15px;
+            color: var(--ink-muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--cream);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--ink-light);
+            line-height: 1.5;
+        }
+
+        .feature-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: var(--emerald-light);
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* Payment mini table */
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .payment-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--cream);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .payment-chip .type {
+            color: var(--ink-light);
+        }
+
+        .payment-chip .freq {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gold);
+            background: var(--gold-pale);
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        /* ===== USER FLOWS ===== */
+        .flow-section {
+            margin-bottom: 48px;
+        }
+
+        .flow-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 28px;
+            color: var(--ink);
+        }
+
+        .flow-track {
+            position: relative;
+            padding-left: 48px;
+        }
+
+        .flow-track::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gold), var(--border));
+        }
+
+        .flow-step {
+            position: relative;
+            padding: 16px 24px;
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: var(--ink-light);
+            line-height: 1.5;
+            transition: all 0.25s;
+        }
+
+        .flow-step:hover {
+            border-color: var(--gold-light);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .flow-step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -48px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--warm-white);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            z-index: 1;
+        }
+
+        .flow-step:first-child::before {
+            background: var(--gold);
+            color: white;
+        }
+
+        .flow-step:last-child::before {
+            background: var(--emerald);
+            border-color: var(--emerald);
+            color: white;
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .timeline-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .timeline-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .timeline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .timeline-card:nth-child(1)::before {
+            background: var(--gold);
+        }
+
+        .timeline-card:nth-child(2)::before {
+            background: var(--emerald);
+        }
+
+        .timeline-card:nth-child(3)::before {
+            background: #3b82f6;
+        }
+
+        .timeline-card:nth-child(4)::before {
+            background: #8b5cf6;
+        }
+
+        .timeline-card:nth-child(5)::before {
+            background: var(--ruby);
+        }
+
+        .tl-month {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-muted);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .tl-phase {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+
+        .tl-details {
+            font-size: 13px;
+            color: var(--ink-muted);
+            line-height: 1.7;
+        }
+
+        .timeline-bar-container {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+
+        .timeline-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--ink-muted);
+        }
+
+        .timeline-bar {
+            height: 8px;
+            background: var(--cream);
+            border-radius: 100px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .bar-seg {
+            height: 100%;
+            transition: width 0.6s ease;
+        }
+
+        .bar-seg:nth-child(1) {
+            background: var(--gold);
+            width: 20%;
+        }
+
+        .bar-seg:nth-child(2) {
+            background: var(--emerald);
+            width: 20%;
+        }
+
+        .bar-seg:nth-child(3) {
+            background: #3b82f6;
+            width: 20%;
+        }
+
+        .bar-seg:nth-child(4) {
+            background: #8b5cf6;
+            width: 20%;
+        }
+
+        .bar-seg:nth-child(5) {
+            background: var(--ruby);
+            width: 20%;
+        }
+
+        .bar-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--ink-muted);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        /* ===== PRICING ===== */
+        .pricing-main {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .pricing-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            padding: 18px 32px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .pricing-row:hover {
+            background: rgba(200, 162, 81, 0.03);
+        }
+
+        .pricing-row:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-row.total {
+            background: var(--ink);
+            border-bottom: none;
+        }
+
+        .pricing-label {
+            font-size: 15px;
+            color: var(--ink-light);
+        }
+
+        .pricing-value {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--ink);
+        }
+
+        .pricing-row.total .pricing-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .pricing-row.total .pricing-value {
+            color: var(--gold);
+            font-size: 22px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .pricing-card-sm {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+        }
+
+        .pricing-card-sm h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+            margin-bottom: 8px;
+        }
+
+        .pricing-card-sm .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .pricing-card-sm .note {
+            font-size: 13px;
+            color: var(--ink-muted);
+        }
+
+        /* Info callout */
+        .callout {
+            padding: 24px 28px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+        }
+
+        .callout.gold {
+            background: var(--gold-pale);
+            border: 1px solid var(--gold-light);
+        }
+
+        .callout.green {
+            background: var(--emerald-light);
+            border: 1px solid #c3e6d5;
+        }
+
+        .callout h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .callout.gold h4 {
+            color: var(--callout-gold-text);
+        }
+
+        .callout.green h4 {
+            color: var(--callout-green-text);
+        }
+
+        .callout p,
+        .callout li {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .callout.gold p,
+        .callout.gold li {
+            color: var(--callout-gold-text);
+        }
+
+        .callout.green p,
+        .callout.green li {
+            color: var(--callout-green-text);
+        }
+
+        /* ===== REQUIREMENTS LIST ===== */
+        .req-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            color: var(--ink-light);
+            transition: all 0.2s;
+        }
+
+        .req-item:hover {
+            border-color: var(--gold-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .req-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--gold-pale);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ===== CTA ===== */
+        .cta {
+            background: var(--ink);
+            border-radius: var(--radius-lg);
+            padding: 56px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 64px;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(200, 162, 81, 0.15) 0%, transparent 70%);
+        }
+
+        .cta h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .cta p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 15px;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 36px;
+            background: var(--gold);
+            color: var(--ink);
+            border: none;
+            border-radius: 100px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cta-button:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(200, 162, 81, 0.3);
+        }
+
+        /* ===== DELIVERABLES ===== */
+        .deliverables-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .del-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: var(--cream);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--ink-light);
+            line-height: 1.5;
+        }
+
+        .del-check {
+            color: var(--emerald);
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        /* responsive moved to bottom */
+
+        /* ===== ANIMATED HAMBURGER ICON ===== */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            border-color: var(--gold-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .hamburger {
+            width: 18px;
+            height: 14px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--ink);
+            border-radius: 2px;
+            transition: all 0.35s cubic-bezier(0.77, 0, 0.18, 1);
+            transform-origin: center;
+        }
+
+        .hamburger span:nth-child(2) {
+            width: 12px;
+            transition: all 0.25s cubic-bezier(0.77, 0, 0.18, 1);
+        }
+
+        /* Animate to X when open */
+        .mobile-menu-btn.open .hamburger span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .mobile-menu-btn.open .hamburger span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .mobile-menu-btn.open .hamburger span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        /* ===== MOBILE NAV BACKDROP ===== */
+        .mobile-backdrop {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 26, 43, 0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 98;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+            transition: all 0.35s ease;
+        }
+
+        .mobile-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        /* ===== MOBILE NAV PANEL ===== */
+        .mobile-nav {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background: var(--warm-white);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            z-index: 99;
+            padding: 12px;
+            opacity: 0;
+            transform: translateY(-16px);
+            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s 0.35s;
+        }
+
+        .mobile-nav.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            visibility: visible;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s 0s;
+        }
+
+        .mobile-nav button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            padding: 14px 18px;
+            background: none;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--ink-light);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateX(-12px);
+        }
+
+        .mobile-nav.open button {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Staggered animation delays */
+        .mobile-nav.open button:nth-child(1) {
+            transition-delay: 0.06s;
+        }
+
+        .mobile-nav.open button:nth-child(2) {
+            transition-delay: 0.10s;
+        }
+
+        .mobile-nav.open button:nth-child(3) {
+            transition-delay: 0.14s;
+        }
+
+        .mobile-nav.open button:nth-child(4) {
+            transition-delay: 0.18s;
+        }
+
+        .mobile-nav.open button:nth-child(5) {
+            transition-delay: 0.22s;
+        }
+
+        .mobile-nav.open button:nth-child(6) {
+            transition-delay: 0.26s;
+        }
+
+        .mobile-nav button:hover {
+            background: var(--cream);
+            transform: translateX(4px);
+        }
+
+        .mobile-nav button.active {
+            background: var(--gold-pale);
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        .mobile-nav button.active::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+
+        /* ===== DEMO SECTION ===== */
+        .demo-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            background: rgba(128, 128, 128, 0.08);
+            padding: 5px;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .demo-toggle-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink-muted);
+            cursor: pointer;
+            border-radius: 9px;
+            transition: all 0.25s;
+        }
+
+        .demo-toggle-btn:hover {
+            color: var(--ink);
+        }
+
+        .demo-toggle-btn.active {
+            background: var(--warm-white);
+            color: var(--ink);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .demo-panel {
+            display: none;
+            animation: slideUp 0.35s ease-out;
+        }
+
+        .demo-panel.active {
+            display: block;
+        }
+
+        /* Mock browser frame */
+        .browser-frame {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: var(--cream);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .browser-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .browser-dots span:nth-child(1) {
+            background: #ef6b6b;
+        }
+
+        .browser-dots span:nth-child(2) {
+            background: #f5c542;
+        }
+
+        .browser-dots span:nth-child(3) {
+            background: #5bc75b;
+        }
+
+        .browser-url {
+            flex: 1;
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            color: var(--ink-muted);
+            font-family: 'DM Sans', monospace;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .browser-content {
+            padding: 0;
+            min-height: 500px;
+        }
+
+        /* Mock App Sidebar */
+        .mock-app {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 560px;
+        }
+
+        .mock-sidebar {
+            background: var(--ink);
+            padding: 24px 0;
+        }
+
+        .mock-sidebar-logo {
+            padding: 0 20px 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 12px;
+        }
+
+        .mock-sidebar-logo span {
+            color: var(--gold);
+        }
+
+        .mock-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            cursor: default;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .mock-nav-item:hover {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .mock-nav-item.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.06);
+            border-left-color: var(--gold);
+        }
+
+        .mock-nav-item .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .mock-nav-section {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.2);
+            padding: 16px 20px 6px;
+            font-weight: 600;
+        }
+
+        /* Mock Main Content */
+        .mock-main {
+            background: var(--mock-main-bg);
+            padding: 28px;
+        }
+
+        .mock-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .mock-topbar h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .mock-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: default;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .mock-btn.primary {
+            background: var(--gold);
+            color: var(--ink);
+        }
+
+        .mock-btn.outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--ink-light);
+        }
+
+        /* Stats row */
+        .mock-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .mock-stat-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .mock-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+            margin-bottom: 6px;
+        }
+
+        .mock-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .mock-stat-change {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .mock-stat-change.up {
+            color: var(--emerald);
+        }
+
+        /* Mock table */
+        .mock-table {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .mock-table-header {
+            display: grid;
+            padding: 12px 20px;
+            background: var(--mock-table-header-bg);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-muted);
+            font-weight: 600;
+        }
+
+        .mock-table-row {
+            display: grid;
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0eeea;
+            font-size: 13px;
+            align-items: center;
+            transition: background 0.15s;
+        }
+
+        .mock-table-row:hover {
+            background: var(--mock-table-hover);
+        }
+
+        .mock-table-row:last-child {
+            border-bottom: none;
+        }
+
+        .members-grid {
+            grid-template-columns: 40px 1.5fr 1fr 1fr 0.8fr 80px;
+            gap: 12px;
+        }
+
+        .mock-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .mock-name {
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .mock-branch {
+            color: var(--ink-muted);
+        }
+
+        .mock-badge {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .mock-badge.active {
+            background: var(--emerald-light);
+            color: var(--emerald);
+        }
+
+        .mock-badge.pending {
+            background: var(--gold-pale);
+            color: #8a6d22;
+        }
+
+        .mock-badge.belt {
+            background: #e8f0fe;
+            color: #2563eb;
+        }
+
+        .mock-more {
+            color: var(--ink-muted);
+            font-size: 16px;
+            cursor: default;
+        }
+
+        /* Photo tracking mock */
+        .mock-filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mock-filter {
+            padding: 7px 16px;
+            border-radius: 8px;
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--ink-muted);
+            cursor: default;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .mock-filter.active {
+            border-color: var(--gold);
+            color: var(--ink);
+            background: var(--gold-pale);
+            font-weight: 600;
+        }
+
+        .mock-photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .mock-photo-card {
+            background: var(--warm-white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.25s;
+        }
+
+        .mock-photo-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+
+        .mock-photo-placeholder {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .mock-photo-placeholder .photo-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(15, 26, 43, 0.7);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .mock-photo-info {
+            padding: 14px 16px;
+        }
+
+        .mock-photo-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .mock-photo-meta {
+            font-size: 12px;
+            color: var(--ink-muted);
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .mock-photo-tags {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mock-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--cream);
+            color: var(--ink-muted);
+        }
+
+        /* ===== DARK MODE OVERRIDES ===== */
+        @media (prefers-color-scheme: dark) {
+            .nav {
+                border-bottom-color: var(--border);
+            }
+
+            .hero::before {
+                background: radial-gradient(circle, rgba(200, 162, 81, 0.05) 0%, transparent 70%);
+            }
+
+            .hero-badge {
+                background: var(--gold-pale);
+                border-color: var(--gold-light);
+            }
+
+            .overview-card:hover {
+                box-shadow: var(--shadow-lg);
+            }
+
+            .roles-table-header {
+                background: #141820;
+            }
+
+            .roles-table-header span {
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .role-row:hover {
+                background: rgba(200, 162, 81, 0.06);
+            }
+
+            .feature-num {
+                background: #141820;
+            }
+
+            .feature-item {
+                background: var(--cream);
+            }
+
+            .flow-step:hover {
+                border-color: var(--gold-light);
+            }
+
+            .mock-sidebar {
+                background: #0a0e16;
+            }
+
+            .mock-sidebar-logo {
+                border-bottom-color: rgba(255, 255, 255, 0.06);
+            }
+
+            .mock-stat-card {
+                background: var(--warm-white);
+            }
+
+            .mock-table {
+                background: var(--warm-white);
+            }
+
+            .mock-table-row:hover {
+                background: var(--mock-table-hover);
+            }
+
+            .mock-photo-card {
+                background: var(--warm-white);
+            }
+
+            .browser-url {
+                background: var(--warm-white);
+                border-color: var(--border);
+                color: var(--ink-muted);
+            }
+
+            .pricing-row:hover {
+                background: rgba(200, 162, 81, 0.05);
+            }
+
+            .pricing-row.total {
+                background: #0a0e16;
+            }
+
+            .cta {
+                background: #0a0e16;
+            }
+
+            .cta::before {
+                background: radial-gradient(circle, rgba(200, 162, 81, 0.1) 0%, transparent 70%);
+            }
+
+            .timeline-card:hover {
+                box-shadow: var(--shadow-md);
+            }
+
+            .mock-filter {
+                background: var(--warm-white);
+                border-color: var(--border);
+            }
+
+            .mock-filter.active {
+                background: var(--gold-pale);
+                border-color: var(--gold);
+            }
+
+            .mock-photo-placeholder .photo-count {
+                background: rgba(0, 0, 0, 0.6);
+            }
+
+            .payment-chip {
+                background: var(--cream);
+            }
+
+            .mock-name {
+                color: var(--ink);
+            }
+
+            .del-item {
+                background: var(--cream);
+            }
+
+            .mock-btn.outline {
+                border-color: var(--border);
+                color: var(--ink-muted);
+            }
+
+            [style*="color:#856404"] {
+                color: var(--callout-gold-text) !important;
+            }
+        }
+
+        /* ===== MOBILE RESPONSIVE FIXES ===== */
+        @media (max-width: 900px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .req-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .deliverables-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mock-app {
+                grid-template-columns: 1fr;
+            }
+
+            .mock-sidebar {
+                display: none;
+            }
+
+            .mock-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .mock-photo-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .members-grid {
+                grid-template-columns: 40px 1fr 80px 36px;
+                gap: 10px;
+            }
+
+            .members-grid .hide-mobile {
+                display: none;
+            }
+
+            .hero-meta {
+                gap: 20px;
+            }
+
+            .section {
+                padding: 0 20px 80px;
+            }
+
+            .hero {
+                padding: 120px 20px 60px;
+            }
+
+            .feature-block {
+                padding: 24px 20px;
+            }
+
+            .flow-title {
+                font-size: 18px;
+            }
+
+            .bar-legend {
+                gap: 12px;
+            }
+
+            .hero-meta-item .value {
+                max-width: 240px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-inner {
+                padding: 0 16px;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero-sub {
+                font-size: 15px;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero-meta-item .value {
+                max-width: 100%;
+                font-size: 13px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .roles-table-header {
+                grid-template-columns: 1fr;
+            }
+
+            .roles-table-header span:last-child {
+                display: none;
+            }
+
+            .role-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .mock-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .mock-stat-card {
+                padding: 12px;
+            }
+
+            .mock-stat-value {
+                font-size: 20px;
+            }
+
+            .mock-photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mock-topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .mock-topbar h2 {
+                font-size: 18px;
+            }
+
+            .mock-main {
+                padding: 16px;
+            }
+
+            .mock-name {
+                font-size: 12px;
+                line-height: 1.35;
+            }
+
+            .mock-photo-meta {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .mock-filter-bar {
+                gap: 6px;
+            }
+
+            .mock-filter {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+
+            .members-grid {
+                grid-template-columns: 32px 1fr 64px;
+                gap: 8px;
+            }
+
+            .mock-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .mock-table-row {
+                padding: 12px 14px;
+            }
+
+            .mock-table-header {
+                padding: 10px 14px;
+                font-size: 10px;
+            }
+
+            .mock-more {
+                display: none;
+            }
+
+            .demo-toggle {
+                width: 100%;
+            }
+
+            .demo-toggle-btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .flow-track {
+                padding-left: 40px;
+            }
+
+            .flow-step {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .flow-step::before {
+                left: -40px;
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .pricing-row {
+                padding: 14px 20px;
+            }
+
+            .pricing-label {
+                font-size: 13px;
+            }
+
+            .pricing-value {
+                font-size: 14px;
+            }
+
+            .pricing-row.total .pricing-value {
+                font-size: 18px;
+            }
+
+            .overview-card {
+                padding: 24px 20px;
+            }
+
+            .timeline-bar-label {
+                font-size: 11px;
+            }
+
+            .legend-item {
+                font-size: 11px;
+            }
+
+            .payment-chip {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .payment-chip .freq {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">PSSGMM <span>Digital</span></div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('overview', this)">Overview</button>
+                <button class="nav-tab" onclick="showSection('features', this)">Features</button>
+                <button class="nav-tab" onclick="showSection('flows', this)">How It Works</button>
+                <button class="nav-tab" onclick="showSection('timeline', this)">Timeline</button>
+                <button class="nav-tab" onclick="showSection('demo', this)">Demo</button>
+                <!-- <button class="nav-tab" onclick="showSection('pricing', this)">Pricing</button> -->
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()"
+                    aria-label="Toggle light or dark mode" title="Toggle light or dark mode">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobile()" aria-label="Menu">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="mobile-nav" id="mobileNav">
+        <button class="active" onclick="showSection('overview', this); closeMobile()">Overview</button>
+        <button onclick="showSection('features', this); closeMobile()">Features</button>
+        <button onclick="showSection('flows', this); closeMobile()">How It Works</button>
+        <button onclick="showSection('timeline', this); closeMobile()">Timeline</button>
+        <button onclick="showSection('demo', this); closeMobile()">Demo</button>
+        <!-- <button onclick="showSection('pricing', this); closeMobile()">Pricing</button> -->
+    </div>
+    <div class="mobile-backdrop" id="mobileBackdrop" onclick="closeMobile()"></div>
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge">✦ Project Proposal</div>
+        <h1>Persatuan Seni Silat<br>Gayong <em>Ma'arifat</em></h1>
+        <p class="hero-sub">A modern digital system to manage members, collect payments, and track activities — all in
+            one place.</p>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <div class="label">Prepared For</div>
+                <div class="value">YTM TKS Datuk Paduka Wan Muhammad Fikri</div>
+            </div>
+            <div class="hero-meta-item">
+                <div class="label">Duration</div>
+                <div class="value">5 Months</div>
+            </div>
+            <div class="hero-meta-item">
+                <div class="label">Date</div>
+                <div class="value">February 2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="overview">
+        <div class="section-header">
+            <div class="section-label">01 — Overview</div>
+            <h2 class="section-title">What We're Building</h2>
+            <p class="section-desc">Right now, many tasks are done manually with paper forms. This system will make
+                everything digital, faster, and more organised.</p>
+        </div>
+
+        <div class="overview-grid">
+            <div class="overview-card">
+                <div class="card-icon blue">👥</div>
+                <h3>Member Registration</h3>
+                <p>New members sign up online. Upload documents, pay fees, and get approved — all without paper forms.
+                </p>
+            </div>
+            <div class="overview-card">
+                <div class="card-icon green">💳</div>
+                <h3>Online Payment</h3>
+                <p>Pay fees using online banking, credit/debit card, or e-wallets like Touch 'n Go and GrabPay.</p>
+            </div>
+            <div class="overview-card">
+                <div class="card-icon amber">📸</div>
+                <h3>Activity & Photo Tracking</h3>
+                <p>Record every training session and event with photos. Keep official records for reports and promotion.
+                </p>
+            </div>
+        </div>
+
+        <div class="roles-table">
+            <div class="roles-table-header">
+                <span>User Role</span>
+                <span>What They Can Do</span>
+            </div>
+            <div class="role-row">
+                <div class="role-name">
+                    <div class="role-dot gold"></div> Member
+                </div>
+                <div class="role-desc">Register online, pay fees, view their own profile and activity history</div>
+            </div>
+            <div class="role-row">
+                <div class="role-name">
+                    <div class="role-dot emerald"></div> Trainer
+                </div>
+                <div class="role-desc">View member list, upload activity photos, tag members in activities</div>
+            </div>
+            <div class="role-row">
+                <div class="role-name">
+                    <div class="role-dot ink"></div> Admin
+                </div>
+                <div class="role-desc">Manage all members, verify registrations, view payments, manage branches,
+                    generate reports</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section" id="features">
+        <div class="section-header">
+            <div class="section-label">02 — Features</div>
+            <h2 class="section-title">System Features</h2>
+            <p class="section-desc">Everything the system will do, explained simply.</p>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block-header">
+                <div class="feature-num">1</div>
+                <h3>Member Registration</h3>
+            </div>
+            <p>New members register through an online form. After submitting, the admin reviews and approves.</p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Fill in personal details (name, IC number, phone, address)
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Upload IC copy or birth certificate
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Upload passport-size photo
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Pay registration fee online
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Admin approves — member gets notification
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block-header">
+                <div class="feature-num">2</div>
+                <h3>Online Payment</h3>
+            </div>
+            <p>Members can pay all fees online. All payments are recorded automatically for audit purposes.</p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> FPX — All Malaysian banks (Maybank, CIMB, Public Bank, etc.)
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Credit / Debit Cards — Visa & Mastercard
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> E-Wallets — Touch 'n Go, GrabPay, Boost, ShopeePay
+                </div>
+            </div>
+            <div class="payment-grid">
+                <div class="payment-chip"><span class="type">New member registration</span><span
+                        class="freq">One-time</span></div>
+                <div class="payment-chip"><span class="type">Yearly membership</span><span class="freq">Yearly</span>
+                </div>
+                <div class="payment-chip"><span class="type">Monthly training</span><span class="freq">Monthly</span>
+                </div>
+                <div class="payment-chip"><span class="type">Exam & certification</span><span class="freq">Per
+                        event</span></div>
+                <div class="payment-chip"><span class="type">Special activity</span><span class="freq">Per event</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <div class="feature-block-header">
+                <div class="feature-num">3</div>
+                <h3>Activity & Photo Tracking</h3>
+            </div>
+            <p>Every training session and event can be recorded with photos. Great for reports and promotion.</p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Upload photos from phone or computer
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Add activity details — date, location, program type
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Tag branch name and trainer
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> View all activities by branch
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div> Download photos for reports and promotion
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS (FLOWS) -->
+    <div class="section" id="flows">
+        <div class="section-header">
+            <div class="section-label">03 — How It Works</div>
+            <h2 class="section-title">User Flow Journeys</h2>
+            <p class="section-desc">Step-by-step walkthrough of how each feature works for the user.</p>
+        </div>
+
+        <div class="flow-section">
+            <div class="flow-title">New Member Registration</div>
+            <div class="flow-track">
+                <div class="flow-step" data-step="1">Member opens the registration page</div>
+                <div class="flow-step" data-step="2">Fills in personal details — name, IC, phone, address</div>
+                <div class="flow-step" data-step="3">Uploads IC copy and passport-size photo</div>
+                <div class="flow-step" data-step="4">Pays registration fee online (FPX / Card / E-Wallet)</div>
+                <div class="flow-step" data-step="5">System sends confirmation to member</div>
+                <div class="flow-step" data-step="6">Admin reviews and approves the registration</div>
+                <div class="flow-step" data-step="7">Member receives approval and can log in</div>
+            </div>
+        </div>
+
+        <div class="flow-section">
+            <div class="flow-title">Making a Payment</div>
+            <div class="flow-track">
+                <div class="flow-step" data-step="1">Member logs in to the system</div>
+                <div class="flow-step" data-step="2">Selects payment type (yearly fee, training fee, etc.)</div>
+                <div class="flow-step" data-step="3">Chooses payment method and completes payment</div>
+                <div class="flow-step" data-step="4">System records the payment automatically</div>
+                <div class="flow-step" data-step="5">Member receives payment receipt via email</div>
+            </div>
+        </div>
+
+        <div class="flow-section">
+            <div class="flow-title">Recording an Activity (Trainer / Admin)</div>
+            <div class="flow-track">
+                <div class="flow-step" data-step="1">Trainer or Admin logs in to the system</div>
+                <div class="flow-step" data-step="2">Creates new activity — date, location, program type</div>
+                <div class="flow-step" data-step="3">Tags the branch and trainer name</div>
+                <div class="flow-step" data-step="4">Uploads photos from the activity</div>
+                <div class="flow-step" data-step="5">Activity is saved and visible to all members</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="section" id="timeline">
+        <div class="section-header">
+            <div class="section-label">04 — Timeline</div>
+            <h2 class="section-title">Project Timeline</h2>
+            <p class="section-desc">The project will be completed in 5 phases over 5 months.</p>
+        </div>
+
+        <div class="timeline-grid">
+            <div class="timeline-card">
+                <div class="tl-month">Month 1</div>
+                <div class="tl-phase">Planning & Setup</div>
+                <div class="tl-details">Plan the system structure, design database, setup development environment,
+                    create login system</div>
+            </div>
+            <div class="timeline-card">
+                <div class="tl-month">Month 2</div>
+                <div class="tl-phase">Registration & Payment</div>
+                <div class="tl-details">Build registration form, document upload, connect payment gateway, admin
+                    approval system</div>
+            </div>
+            <div class="timeline-card">
+                <div class="tl-month">Month 3</div>
+                <div class="tl-phase">Activity & Photos</div>
+                <div class="tl-details">Build photo upload feature, create activity management, setup gallery, access
+                    control</div>
+            </div>
+            <div class="timeline-card">
+                <div class="tl-month">Month 4</div>
+                <div class="tl-phase">Testing & Training</div>
+                <div class="tl-details">Test with real users, fix issues, train admins and trainers, prepare user manual
+                </div>
+            </div>
+            <div class="timeline-card">
+                <div class="tl-month">Month 5</div>
+                <div class="tl-phase">Launch</div>
+                <div class="tl-details">Go live with all branches, monitor performance, provide support, ongoing fixes
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-bar-container">
+            <div class="timeline-bar-label">
+                <span>Month 1</span>
+                <span>Month 2</span>
+                <span>Month 3</span>
+                <span>Month 4</span>
+                <span>Month 5</span>
+            </div>
+            <div class="timeline-bar">
+                <div class="bar-seg"></div>
+                <div class="bar-seg"></div>
+                <div class="bar-seg"></div>
+                <div class="bar-seg"></div>
+                <div class="bar-seg"></div>
+            </div>
+            <div class="bar-legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--gold)"></div> Planning
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--emerald)"></div> Registration & Payment
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#3b82f6"></div> Activity & Photos
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#8b5cf6"></div> Testing
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--ruby)"></div> Launch
+                </div>
+            </div>
+        </div>
+
+        <div class="callout gold" style="margin-top: 24px;">
+            <h4>Why 5 Months?</h4>
+            <p>Payment systems need careful testing with all banks and payment methods. We need to make sure everything
+                works correctly before real money is involved. Training users also takes time so everyone knows how to
+                use the system properly.</p>
+        </div>
+    </div>
+
+    <!-- PRICING -->
+    <!-- DEMO -->
+    <div class="section" id="demo">
+        <div class="section-header">
+            <div class="section-label">05 — Preview</div>
+            <h2 class="section-title">System Demo</h2>
+            <p class="section-desc">A preview of what the system will look like. This is a mockup to show the design
+                direction.</p>
+        </div>
+
+        <div class="demo-toggle">
+            <button class="demo-toggle-btn active" onclick="showDemo('membership', this)">👥 Membership</button>
+            <button class="demo-toggle-btn" onclick="showDemo('photos', this)">📸 Photo Tracking</button>
+        </div>
+
+        <!-- MEMBERSHIP DEMO -->
+        <div class="demo-panel active" id="demo-membership">
+            <div class="browser-frame">
+                <div class="browser-bar">
+                    <div class="browser-dots"><span></span><span></span><span></span></div>
+                    <div class="browser-url">pssgmm.my/admin/members</div>
+                </div>
+                <div class="browser-content">
+                    <div class="mock-app">
+                        <div class="mock-sidebar">
+                            <div class="mock-sidebar-logo">PSSGMM <span>System</span></div>
+                            <div class="mock-nav-section">Main</div>
+                            <div class="mock-nav-item"><span class="nav-icon">📊</span> Dashboard</div>
+                            <div class="mock-nav-item active"><span class="nav-icon">👥</span> Members</div>
+                            <div class="mock-nav-item"><span class="nav-icon">💳</span> Payments</div>
+                            <div class="mock-nav-item"><span class="nav-icon">📸</span> Activities</div>
+                            <div class="mock-nav-section">Management</div>
+                            <div class="mock-nav-item"><span class="nav-icon">🏢</span> Branches</div>
+                            <div class="mock-nav-item"><span class="nav-icon">🥋</span> Trainers</div>
+                            <div class="mock-nav-item"><span class="nav-icon">📋</span> Reports</div>
+                            <div class="mock-nav-section">System</div>
+                            <div class="mock-nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+                        </div>
+                        <div class="mock-main">
+                            <div class="mock-topbar">
+                                <h2>Members</h2>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <button class="mock-btn outline">Export</button>
+                                    <button class="mock-btn primary">+ Add Member</button>
+                                </div>
+                            </div>
+                            <div class="mock-stats">
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Total Members</div>
+                                    <div class="mock-stat-value">1,247</div>
+                                    <div class="mock-stat-change up">↑ 12% this month</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Active</div>
+                                    <div class="mock-stat-value">1,089</div>
+                                    <div class="mock-stat-change up">↑ 87% active rate</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Pending Approval</div>
+                                    <div class="mock-stat-value">23</div>
+                                    <div class="mock-stat-change" style="color:var(--gold);">Needs review</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Branches</div>
+                                    <div class="mock-stat-value">34</div>
+                                    <div class="mock-stat-change up">Nationwide</div>
+                                </div>
+                            </div>
+
+                            <div class="mock-filter-bar">
+                                <div class="mock-filter active">All Members</div>
+                                <div class="mock-filter">Active</div>
+                                <div class="mock-filter">Pending</div>
+                                <div class="mock-filter">By Branch ▾</div>
+                            </div>
+
+                            <div class="mock-table">
+                                <div class="mock-table-header members-grid">
+                                    <span></span>
+                                    <span>Name</span>
+                                    <span class="hide-mobile">Branch</span>
+                                    <span class="hide-mobile">Belt Level</span>
+                                    <span>Status</span>
+                                    <span></span>
+                                </div>
+                                <div class="mock-table-row members-grid">
+                                    <div class="mock-avatar" style="background:#2563eb">AH</div>
+                                    <div>
+                                        <div class="mock-name">Ahmad Haziq bin Rosli</div>
+                                        <div style="font-size:11px;color:var(--ink-muted)">IC: 950312-XX-XXXX</div>
+                                    </div>
+                                    <div class="mock-branch hide-mobile">Kuala Lumpur</div>
+                                    <div class="hide-mobile"><span class="mock-badge belt">Tali Pinggang 3</span></div>
+                                    <div><span class="mock-badge active">Active</span></div>
+                                    <div class="mock-more">⋯</div>
+                                </div>
+                                <div class="mock-table-row members-grid">
+                                    <div class="mock-avatar" style="background:var(--emerald)">NS</div>
+                                    <div>
+                                        <div class="mock-name">Nur Syafiqah bt Abdullah</div>
+                                        <div style="font-size:11px;color:var(--ink-muted)">IC: 010815-XX-XXXX</div>
+                                    </div>
+                                    <div class="mock-branch hide-mobile">Johor Bahru</div>
+                                    <div class="hide-mobile"><span class="mock-badge belt">Tali Pinggang 1</span></div>
+                                    <div><span class="mock-badge active">Active</span></div>
+                                    <div class="mock-more">⋯</div>
+                                </div>
+                                <div class="mock-table-row members-grid">
+                                    <div class="mock-avatar" style="background:var(--gold)">MI</div>
+                                    <div>
+                                        <div class="mock-name">Muhammad Irfan bin Yusof</div>
+                                        <div style="font-size:11px;color:var(--ink-muted)">IC: 081204-XX-XXXX</div>
+                                    </div>
+                                    <div class="mock-branch hide-mobile">Shah Alam</div>
+                                    <div class="hide-mobile"><span class="mock-badge belt">Tali Pinggang 2</span></div>
+                                    <div><span class="mock-badge pending">Pending</span></div>
+                                    <div class="mock-more">⋯</div>
+                                </div>
+                                <div class="mock-table-row members-grid">
+                                    <div class="mock-avatar" style="background:var(--ruby)">FA</div>
+                                    <div>
+                                        <div class="mock-name">Farah Aisyah bt Kamal</div>
+                                        <div style="font-size:11px;color:var(--ink-muted)">IC: 990520-XX-XXXX</div>
+                                    </div>
+                                    <div class="mock-branch hide-mobile">Penang</div>
+                                    <div class="hide-mobile"><span class="mock-badge belt">Tali Pinggang 4</span></div>
+                                    <div><span class="mock-badge active">Active</span></div>
+                                    <div class="mock-more">⋯</div>
+                                </div>
+                                <div class="mock-table-row members-grid">
+                                    <div class="mock-avatar" style="background:#8b5cf6">ZA</div>
+                                    <div>
+                                        <div class="mock-name">Zulkifli bin Ahmad</div>
+                                        <div style="font-size:11px;color:var(--ink-muted)">IC: 870930-XX-XXXX</div>
+                                    </div>
+                                    <div class="mock-branch hide-mobile">Kota Bharu</div>
+                                    <div class="hide-mobile"><span class="mock-badge belt">Tali Pinggang 5</span></div>
+                                    <div><span class="mock-badge active">Active</span></div>
+                                    <div class="mock-more">⋯</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHOTO TRACKING DEMO -->
+        <div class="demo-panel" id="demo-photos">
+            <div class="browser-frame">
+                <div class="browser-bar">
+                    <div class="browser-dots"><span></span><span></span><span></span></div>
+                    <div class="browser-url">pssgmm.my/admin/activities</div>
+                </div>
+                <div class="browser-content">
+                    <div class="mock-app">
+                        <div class="mock-sidebar">
+                            <div class="mock-sidebar-logo">PSSGMM <span>System</span></div>
+                            <div class="mock-nav-section">Main</div>
+                            <div class="mock-nav-item"><span class="nav-icon">📊</span> Dashboard</div>
+                            <div class="mock-nav-item"><span class="nav-icon">👥</span> Members</div>
+                            <div class="mock-nav-item"><span class="nav-icon">💳</span> Payments</div>
+                            <div class="mock-nav-item active"><span class="nav-icon">📸</span> Activities</div>
+                            <div class="mock-nav-section">Management</div>
+                            <div class="mock-nav-item"><span class="nav-icon">🏢</span> Branches</div>
+                            <div class="mock-nav-item"><span class="nav-icon">🥋</span> Trainers</div>
+                            <div class="mock-nav-item"><span class="nav-icon">📋</span> Reports</div>
+                            <div class="mock-nav-section">System</div>
+                            <div class="mock-nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+                        </div>
+                        <div class="mock-main">
+                            <div class="mock-topbar">
+                                <h2>Activities & Photos</h2>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                    <button class="mock-btn outline">Download All</button>
+                                    <button class="mock-btn primary">+ New Activity</button>
+                                </div>
+                            </div>
+                            <div class="mock-stats">
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Total Activities</div>
+                                    <div class="mock-stat-value">156</div>
+                                    <div class="mock-stat-change up">↑ 8 this month</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Photos Uploaded</div>
+                                    <div class="mock-stat-value">2,340</div>
+                                    <div class="mock-stat-change up">↑ 142 this month</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">Branches Active</div>
+                                    <div class="mock-stat-value">28</div>
+                                    <div class="mock-stat-change up">82% participation</div>
+                                </div>
+                                <div class="mock-stat-card">
+                                    <div class="mock-stat-label">This Month</div>
+                                    <div class="mock-stat-value">Feb 2026</div>
+                                    <div class="mock-stat-change" style="color:var(--gold);">In progress</div>
+                                </div>
+                            </div>
+
+                            <div class="mock-filter-bar">
+                                <div class="mock-filter active">All Activities</div>
+                                <div class="mock-filter">Training</div>
+                                <div class="mock-filter">Events</div>
+                                <div class="mock-filter">Exams</div>
+                                <div class="mock-filter">Branch ▾</div>
+                                <div class="mock-filter">Month ▾</div>
+                            </div>
+
+                            <div class="mock-photo-grid">
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,#1a6b4a,#2da06e)">
+                                        🥋
+                                        <span class="photo-count">📷 12 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Latihan Mingguan</div>
+                                        <div class="mock-photo-meta"><span>📅 8 Feb 2026</span><span>📍 Kuala
+                                                Lumpur</span></div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Training</span>
+                                            <span class="mock-tag">Cawangan KL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,var(--gold),#d4a84b)">
+                                        🏆
+                                        <span class="photo-count">📷 34 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Peperiksaan Tali Pinggang</div>
+                                        <div class="mock-photo-meta"><span>📅 2 Feb 2026</span><span>📍 Shah Alam</span>
+                                        </div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Exam</span>
+                                            <span class="mock-tag">Cawangan SA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,#2563eb,#5b8def)">
+                                        🎉
+                                        <span class="photo-count">📷 56 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Majlis Penyampaian Sijil</div>
+                                        <div class="mock-photo-meta"><span>📅 25 Jan 2026</span><span>📍 Johor
+                                                Bahru</span></div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Event</span>
+                                            <span class="mock-tag">Cawangan JB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">
+                                        🥋
+                                        <span class="photo-count">📷 8 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Latihan Khas Jurulatih</div>
+                                        <div class="mock-photo-meta"><span>📅 20 Jan 2026</span><span>📍 Penang</span>
+                                        </div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Training</span>
+                                            <span class="mock-tag">Cawangan PG</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,var(--ruby),#b44455)">
+                                        🤝
+                                        <span class="photo-count">📷 22 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Program Komuniti</div>
+                                        <div class="mock-photo-meta"><span>📅 15 Jan 2026</span><span>📍 Kota
+                                                Bharu</span></div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Event</span>
+                                            <span class="mock-tag">Cawangan KB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mock-photo-card">
+                                    <div class="mock-photo-placeholder"
+                                        style="background:linear-gradient(135deg,#0f766e,#2dd4bf)">
+                                        🥋
+                                        <span class="photo-count">📷 18 photos</span>
+                                    </div>
+                                    <div class="mock-photo-info">
+                                        <div class="mock-photo-title">Latihan Mingguan</div>
+                                        <div class="mock-photo-meta"><span>📅 11 Jan 2026</span><span>📍 Kuching</span>
+                                        </div>
+                                        <div class="mock-photo-tags">
+                                            <span class="mock-tag">Training</span>
+                                            <span class="mock-tag">Cawangan KCH</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="section" id="pricing" style="display:none !important">
+        <div class="section-header">
+            <div class="section-label">05 — Investment</div>
+            <h2 class="section-title">Project Cost</h2>
+            <p class="section-desc">Transparent breakdown of development costs and ongoing expenses.</p>
+        </div>
+
+        <div class="pricing-main">
+            <div class="pricing-row">
+                <span class="pricing-label">Month 1 — Planning & Setup</span>
+                <span class="pricing-value">RM 5,000</span>
+            </div>
+            <div class="pricing-row">
+                <span class="pricing-label">Month 2–3 — Registration & Payment System</span>
+                <span class="pricing-value">RM 11,000</span>
+            </div>
+            <div class="pricing-row">
+                <span class="pricing-label">Month 4 — Activity Photo System</span>
+                <span class="pricing-value">RM 5,000</span>
+            </div>
+            <div class="pricing-row">
+                <span class="pricing-label">Month 5 — Testing & Training</span>
+                <span class="pricing-value">RM 3,500</span>
+            </div>
+            <div class="pricing-row">
+                <span class="pricing-label">Month 6 — Launch & Support</span>
+                <span class="pricing-value">RM 2,500</span>
+            </div>
+            <div class="pricing-row total">
+                <span class="pricing-label">Total Development Cost</span>
+                <span class="pricing-value">RM 27,000</span>
+            </div>
+        </div>
+
+        <h3 style="font-size:18px; margin-bottom:16px; color: var(--ink);">Payment Schedule</h3>
+        <div class="pricing-cards">
+            <div class="pricing-card-sm">
+                <h4>Deposit</h4>
+                <div class="amount">RM 8,100</div>
+                <div class="note">30% — When project starts</div>
+            </div>
+            <div class="pricing-card-sm">
+                <h4>Progress</h4>
+                <div class="amount">RM 10,800</div>
+                <div class="note">40% — After payment system works</div>
+            </div>
+            <div class="pricing-card-sm">
+                <h4>Final</h4>
+                <div class="amount">RM 8,100</div>
+                <div class="note">30% — When project is complete</div>
+            </div>
+        </div>
+
+        <h3 style="font-size:18px; margin-bottom:16px; color: var(--ink);">Ongoing Monthly Costs</h3>
+        <div class="callout gold">
+            <h4>Hosting & Database</h4>
+            <p><strong>Year 1:</strong> RM 10 – 100 per month &nbsp;|&nbsp; <strong>Year 2+:</strong> RM 100 – 200 per
+                month<br>
+                <em>Costs increase as more members use the system.</em>
+            </p>
+        </div>
+
+        <h3 style="font-size:18px; margin-bottom:16px; color: var(--ink);">Payment Gateway Fees</h3>
+        <div class="callout gold">
+            <h4>Per Transaction Charges (charged by payment provider)</h4>
+            <p><strong>FPX (Online Banking):</strong> RM 1.10 per transaction<br>
+                <strong>E-Wallet:</strong> 1.1% – 1.4% of amount<br>
+                <strong>Credit/Debit Card:</strong> 1.8% of amount<br><br>
+                <em>Example: If member pays RM 100 via FPX, PSSGMM receives RM 98.90</em>
+            </p>
+        </div>
+
+        <h3 style="font-size:18px; margin: 32px 0 16px; color: var(--ink);">What You Get</h3>
+        <div class="deliverables-grid">
+            <div class="del-item"><span class="del-check">✓</span> Complete working website system</div>
+            <div class="del-item"><span class="del-check">✓</span> Member registration with document upload</div>
+            <div class="del-item"><span class="del-check">✓</span> Payment gateway with 3 payment methods</div>
+            <div class="del-item"><span class="del-check">✓</span> Activity photo system</div>
+            <div class="del-item"><span class="del-check">✓</span> Admin dashboard to manage everything</div>
+            <div class="del-item"><span class="del-check">✓</span> Works on phones, tablets, and computers</div>
+            <div class="del-item"><span class="del-check">✓</span> 2 training sessions for admins & trainers</div>
+            <div class="del-item"><span class="del-check">✓</span> User manual in Bahasa Malaysia</div>
+            <div class="del-item"><span class="del-check">✓</span> 1 month support after launch</div>
+            <div class="del-item"><span class="del-check">✓</span> Full system ownership — all code belongs to PSSGMM
+            </div>
+        </div>
+
+        <h3 style="font-size:18px; margin: 32px 0 16px; color: var(--ink);">What PSSGMM Needs to Provide</h3>
+        <div class="req-grid">
+            <div class="req-item">
+                <div class="req-num">1</div> SSM registration documents (for payment gateway)
+            </div>
+            <div class="req-item">
+                <div class="req-num">2</div> Domain name (e.g. pssgmm.my)
+            </div>
+            <div class="req-item">
+                <div class="req-num">3</div> PSSGMM logo (high quality)
+            </div>
+            <div class="req-item">
+                <div class="req-num">4</div> List of branches and locations
+            </div>
+            <div class="req-item">
+                <div class="req-num">5</div> Fee amounts for each payment type
+            </div>
+            <div class="req-item">
+                <div class="req-num">6</div> One person to coordinate and give feedback
+            </div>
+        </div>
+
+        <div class="cta">
+            <h3>Ready to Start?</h3>
+            <p>Project can begin within 1 week after deposit payment</p>
+            <button class="cta-button" onclick="alert('Please contact us to discuss next steps')">Contact Us to Proceed
+                →</button>
+        </div>
+    </div>
+
+    <script>
+        const THEME_STORAGE_KEY = 'pssgmm_theme';
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
+            const icon = document.getElementById('themeIcon');
+            if (icon) icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem(THEME_STORAGE_KEY);
+            if (saved === 'dark' || saved === 'light') {
+                setTheme(saved);
+                return;
+            }
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setTheme(prefersDark ? 'dark' : 'light');
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
+        function showDemo(panel, btn) {
+            document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('demo-' + panel).classList.add('active');
+            document.querySelectorAll('.demo-toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function showSection(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            if (btn && btn.classList.contains('nav-tab')) btn.classList.add('active');
+            // Also sync mobile nav
+            document.querySelectorAll('.mobile-nav button').forEach(b => {
+                b.classList.remove('active');
+                if (b.textContent.trim().toLowerCase().includes(id === 'flows' ? 'how' : id)) b.classList.add('active');
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobile() {
+            const nav = document.getElementById('mobileNav');
+            const btn = document.getElementById('mobileMenuBtn');
+            const backdrop = document.getElementById('mobileBackdrop');
+            const isOpen = nav.classList.toggle('open');
+            btn.classList.toggle('open', isOpen);
+            backdrop.classList.toggle('open', isOpen);
+        }
+        function closeMobile() {
+            document.getElementById('mobileNav').classList.remove('open');
+            document.getElementById('mobileMenuBtn').classList.remove('open');
+            document.getElementById('mobileBackdrop').classList.remove('open');
+        }
+
+        // Nav shadow on scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+        });
+
+        initTheme();
+    </script>
+</body>
+
+</html>
